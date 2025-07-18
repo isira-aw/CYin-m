@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, LogIn, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
 
@@ -33,6 +33,7 @@ export const LoginPage: React.FC = () => {
         setError('Login failed. Please check your credentials.');
       }
     } catch (err) {
+      console.error(err);
       setError('Login failed. Please check your credentials and try again.');
     } finally {
       setIsLoading(false);
@@ -46,9 +47,16 @@ export const LoginPage: React.FC = () => {
       <div className="relative w-full max-w-md">
         <div className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl shadow-blue-500/10 p-8">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            {/* <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <LogIn className="w-8 h-8 text-white" />
-            </div>
+            </div> */}
+            <div className=" bg-gradient-to-br  flex items-center justify-center mx-auto">
+            <img 
+  src="/CYin-logo.png" 
+  alt="CYin Logo" 
+  className="w-40 h-40 rounded-xl object-cover" 
+/>
+          </div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Welcome Back</h1>
             <p className="text-slate-600 dark:text-slate-400">Sign in to your account to continue</p>
           </div>

@@ -17,8 +17,7 @@ export const DirectoryCard: React.FC<DirectoryCardProps> = ({
   logo,
   tags,
   location,
-  employees,
-  type
+  employees
 }) => {
   return (
     <div className="group bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-stone-200 dark:border-slate-700 rounded-2xl p-6 hover:bg-white dark:hover:bg-slate-800/70 hover:border-stone-300 dark:hover:border-slate-600 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-stone-900/10 dark:hover:shadow-slate-900/50">

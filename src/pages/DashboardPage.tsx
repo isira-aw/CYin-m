@@ -39,6 +39,7 @@ export const DashboardPage: React.FC = () => {
           setLocationError('');
         },
         (error) => {
+          console.error(error);
           setLocationError('Unable to get your location. Please enable location services.');
         }
       );
@@ -68,6 +69,7 @@ export const DashboardPage: React.FC = () => {
       setSelectedStatus('');
       setTimeout(() => setEventSuccess(''), 3000);
     } catch (err) {
+      console.error(err);
       setError('Failed to log event. Please try again.');
     } finally {
       setIsLoggingEvent(false);
@@ -93,6 +95,7 @@ export const DashboardPage: React.FC = () => {
       setWorkDescription('');
       setTimeout(() => setWorkSuccess(''), 3000);
     } catch (err) {
+      console.error(err);
       setError('Failed to log work. Please try again.');
     } finally {
       setIsLoggingWork(false);
@@ -108,6 +111,7 @@ export const DashboardPage: React.FC = () => {
       // Sometimes 'display_name' might be undefined, so fallback gracefully
       setAddress(data.display_name || 'Unknown location')
     } catch (error) {
+      console.error(error);
       setAddress('Failed to fetch address')
     }
   }
