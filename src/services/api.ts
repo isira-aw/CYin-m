@@ -37,7 +37,7 @@ class ApiService {
     }
   }
 
-  async signUp(data: SignUpRequest): Promise<any> {
+  async signUp(data: SignUpRequest): Promise<unknown> {
     try {
       const response = await this.makeRequest(
         `${API_BASE_URL}/customers/signUp`,
