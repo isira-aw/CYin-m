@@ -1,28 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, Play, Square, Coffee, Navigation, FileText, LogOut, User } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { apiService } from '../services/api';
+import React, { useState, useEffect } from "react";
+import {
+  MapPin,
+  Clock,
+  Play,
+  Square,
+  Coffee,
+  Navigation,
+  FileText,
+  LogOut,
+  User,
+} from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { apiService } from "../services/api";
 
 const statusOptions = [
-  { value: 'starting working', label: 'Starting Work', icon: Play, color: 'from-green-500 to-emerald-600' },
-  { value: 'ending', label: 'Ending Work', icon: Square, color: 'from-red-500 to-rose-600' },
-  { value: 'breaking', label: 'Taking Break', icon: Coffee, color: 'from-yellow-500 to-orange-600' },
-  { value: 'moving', label: 'Moving/Traveling', icon: Navigation, color: 'from-blue-500 to-cyan-600' },
-  { value: 'working', label: 'Currently Working', icon: Clock, color: 'from-purple-500 to-violet-600' },
+  {
+    value: "starting working",
+    label: "Start Work",
+    icon: Play,
+    color: "from-green-500 to-emerald-600",
+  },
+  {
+    value: "breaking",
+    label: "Taking a Break",
+    icon: Coffee,
+    color: "from-yellow-500 to-orange-600",
+  },
+  {
+    value: "moving",
+    label: "Traveling",
+    icon: Navigation,
+    color: "from-blue-500 to-cyan-600",
+  },
+  {
+    value: "ending",
+    label: "End Work",
+    icon: Square,
+    color: "from-red-500 to-rose-600",
+  },
 ];
 
 export const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [locationError, setLocationError] = useState('');
-  const [workDescription, setWorkDescription] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
+  const [locationError, setLocationError] = useState("");
+  const [workDescription, setWorkDescription] = useState("");
   const [isLoggingEvent, setIsLoggingEvent] = useState(false);
   const [isLoggingWork, setIsLoggingWork] = useState(false);
-  const [eventSuccess, setEventSuccess] = useState('');
-  const [workSuccess, setWorkSuccess] = useState('');
-  const [error, setError] = useState('');
-  const [address, setAddress] = useState('')
+  const [eventSuccess, setEventSuccess] = useState("");
+  const [workSuccess, setWorkSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
     getCurrentLocation();
@@ -36,27 +67,29 @@ export const DashboardPage: React.FC = () => {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
-          setLocationError('');
+          setLocationError("");
         },
         (error) => {
           console.error(error);
-          setLocationError('Unable to get your location. Please enable location services.');
+          setLocationError(
+            "Unable to get your location. Please enable location services."
+          );
         }
       );
     } else {
-      setLocationError('Geolocation is not supported by this browser.');
+      setLocationError("Geolocation is not supported by this browser.");
     }
   };
 
   const handleLogEvent = async () => {
     if (!selectedStatus || !location) {
-      setError('Please select a status and ensure location is available.');
+      setError("Please select a status and ensure location is available.");
       return;
     }
 
     setIsLoggingEvent(true);
-    setError('');
-    setEventSuccess('');
+    setError("");
+    setEventSuccess("");
 
     try {
       const locationString = `${location.lat}, ${location.lng}`;
@@ -64,13 +97,13 @@ export const DashboardPage: React.FC = () => {
         status: selectedStatus,
         location: locationString,
       });
-      
-      setEventSuccess('Event logged successfully!');
-      setSelectedStatus('');
-      setTimeout(() => setEventSuccess(''), 3000);
+
+      setEventSuccess("Event logged successfully!");
+      setSelectedStatus("");
+      setTimeout(() => setEventSuccess(""), 3000);
     } catch (err) {
       console.error(err);
-      setError('Failed to log event. Please try again.');
+      setError("Failed to log event. Please try again.");
     } finally {
       setIsLoggingEvent(false);
     }
@@ -78,52 +111,72 @@ export const DashboardPage: React.FC = () => {
 
   const handleLogWork = async () => {
     if (!workDescription.trim()) {
-      setError('Please enter a work description.');
+      setError("Please enter a work description.");
       return;
     }
 
     setIsLoggingWork(true);
-    setError('');
-    setWorkSuccess('');
+    setError("");
+    setWorkSuccess("");
 
     try {
       await apiService.logWork({
         description: workDescription,
       });
-      
-      setWorkSuccess('Work logged successfully!');
-      setWorkDescription('');
-      setTimeout(() => setWorkSuccess(''), 3000);
+
+      setWorkSuccess("Work logged successfully!");
+      setWorkDescription("");
+      setTimeout(() => setWorkSuccess(""), 3000);
     } catch (err) {
       console.error(err);
-      setError('Failed to log work. Please try again.');
+      setError("Failed to log work. Please try again.");
     } finally {
       setIsLoggingWork(false);
     }
   };
 
-  async function reverseGeocode(lat: number, lng: number) {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-      )
-      const data = await response.json()
-      // Sometimes 'display_name' might be undefined, so fallback gracefully
-      setAddress(data.display_name || 'Unknown location')
-    } catch (error) {
-      console.error(error);
-      setAddress('Failed to fetch address')
+  
+async function reverseGeocode(lat: number, lng: number) {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`
+    );
+    
+    const data = await response.json();
+
+    if (data && data.address) {
+      // Get the formatted address with 4 components (if available)
+      const addressParts = [
+        data.address.road,
+        data.address.suburb,
+        data.address.city,
+        data.address.state,
+        data.address.country
+      ].filter(Boolean); // Filter out undefined or empty values
+
+      const detailedAddress = addressParts.slice(0, 4).join(", ") || "Unknown location";
+      setAddress(detailedAddress);
+    } else {
+      setAddress("Failed to fetch address");
     }
+  } catch (error) {
+    console.error(error);
+    setAddress("Failed to fetch address");
   }
+}
 
-  // When location changes, reverse geocode the coordinates
-  useEffect(() => {
-    if (location) {
-      reverseGeocode(location.lat, location.lng)
-    }
-  }, [location])
+// When the location changes, trigger reverse geocoding
+useEffect(() => {
+  if (location && location.lat && location.lng) {
+    reverseGeocode(location.lat, location.lng);
+  }
+}, [location]);
 
-  const selectedStatusOption = statusOptions.find(option => option.value === selectedStatus);
+// Example: Handling status selection (unchanged)
+const selectedStatusOption = statusOptions.find(
+  (option) => option.value === selectedStatus
+);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
@@ -135,9 +188,11 @@ export const DashboardPage: React.FC = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
                 <Clock className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white">WorkTracker</h1>
+              <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+                WorkTracker
+              </h1>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-400">
                 <User className="w-4 h-4" />
@@ -161,9 +216,6 @@ export const DashboardPage: React.FC = () => {
           <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
             Welcome back! 👋
           </h2>
-          <p className="text-xl text-slate-600 dark:text-slate-400">
-            Track your work status and log your activities
-          </p>
         </div>
 
         {/* Error/Success Messages */}
@@ -192,33 +244,37 @@ export const DashboardPage: React.FC = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
                 <MapPin className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Log Event</h3>
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+                Log Event
+              </h3>
             </div>
 
             {/* Location Status */}
             <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
               <div className="flex items-center space-x-2 mb-2">
                 <MapPin className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Current Location</span>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Current Location
+                </span>
               </div>
               {location ? (
-            // Show the human-readable address instead of raw coordinates
-            <p className="text-sm text-green-600 dark:text-green-400">
-              📍 {address || 'Loading address...'}
-            </p>
-          ) : (
-            <div>
-              <p className="text-sm text-red-600 dark:text-red-400 mb-2">
-                {locationError || 'Getting location...'}
-              </p>
-              <button
-                onClick={getCurrentLocation}
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
-              >
-                Retry Location
-              </button>
-            </div>
-          )}
+                // Show the human-readable address instead of raw coordinates
+                <p className="text-sm text-green-600 dark:text-green-400">
+                  📍 {address || "Loading address..."}
+                </p>
+              ) : (
+                <div>
+                  <p className="text-sm text-red-600 dark:text-red-400 mb-2">
+                    {locationError || "Getting location..."}
+                  </p>
+                  <button
+                    onClick={getCurrentLocation}
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+                  >
+                    Retry Location
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Status Selection */}
@@ -233,15 +289,19 @@ export const DashboardPage: React.FC = () => {
                     onClick={() => setSelectedStatus(option.value)}
                     className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${
                       selectedStatus === option.value
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-700/50'
+                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                        : "border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-700/50"
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <div className={`w-10 h-10 bg-gradient-to-br ${option.color} rounded-xl flex items-center justify-center`}>
+                      <div
+                        className={`w-10 h-10 bg-gradient-to-br ${option.color} rounded-xl flex items-center justify-center`}
+                      >
                         <option.icon className="w-5 h-5 text-white" />
                       </div>
-                      <span className="font-medium text-slate-900 dark:text-white">{option.label}</span>
+                      <span className="font-medium text-slate-900 dark:text-white">
+                        {option.label}
+                      </span>
                     </div>
                   </button>
                 ))}
@@ -263,6 +323,26 @@ export const DashboardPage: React.FC = () => {
               )}
             </button>
           </div>
+          {/* Current Status Display */}
+          {selectedStatusOption && (
+            <div className="mt-8 bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl p-6">
+              <div className="flex items-center justify-center space-x-4">
+                <div
+                  className={`w-12 h-12 bg-gradient-to-br ${selectedStatusOption.color} rounded-2xl flex items-center justify-center`}
+                >
+                  <selectedStatusOption.icon className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Selected Status
+                  </p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">
+                    {selectedStatusOption.label}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Work Logging Card */}
           <div className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl shadow-purple-500/10 p-8">
@@ -270,11 +350,16 @@ export const DashboardPage: React.FC = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Log Work</h3>
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+                Log Work
+              </h3>
             </div>
 
             <div className="mb-6">
-              <label htmlFor="workDescription" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+              <label
+                htmlFor="workDescription"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3"
+              >
                 Work Description
               </label>
               <textarea
@@ -303,21 +388,6 @@ export const DashboardPage: React.FC = () => {
             </button>
           </div>
         </div>
-
-        {/* Current Status Display */}
-        {selectedStatusOption && (
-          <div className="mt-8 bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl p-6">
-            <div className="flex items-center justify-center space-x-4">
-              <div className={`w-12 h-12 bg-gradient-to-br ${selectedStatusOption.color} rounded-2xl flex items-center justify-center`}>
-                <selectedStatusOption.icon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Selected Status</p>
-                <p className="text-xl font-bold text-slate-900 dark:text-white">{selectedStatusOption.label}</p>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

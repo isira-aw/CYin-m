@@ -53,11 +53,7 @@ export const SignUpPage: React.FC = () => {
       console.error("Unknown error:", err);
 
       if (err instanceof Error) {
-        if (err.message.includes("Email already registered")) {
-          setError("Email already registered. Please log in instead.");
-        } else {
-          setError("Sign up failed. Please try again.");
-        }
+        setError(err.message); // Show the error message from the API response
       } else {
         setError("An unexpected error occurred.");
       }
