@@ -49,7 +49,7 @@ export const LoginPage: React.FC = () => {
           <div className="text-center mb-8">
             <div className="w-full h-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <img
-                src="/CYin-logo.png"
+                src="https://github.com/isira-aw/CYin-m/blob/main/CYin-logo.png?raw=true"
                 alt="CYin Logo"
                 className="scale-50"
               />

@@ -182,7 +182,7 @@ const selectedStatusOption = statusOptions.find(
             <div className="flex items-center space-x-3">
               <div className="w-20 h-full -m-5 p-0">
               <img
-                src="/CYin-logo.png"
+                src="https://github.com/isira-aw/CYin-m/blob/main/CYin-logo.png?raw=true"
                 alt="CYin Logo"
                 className="scale-50"
               />
