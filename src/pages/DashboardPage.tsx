@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   MapPin,
-  Clock,
   Play,
   Square,
   Coffee,
@@ -139,23 +138,21 @@ export const DashboardPage: React.FC = () => {
 async function reverseGeocode(lat: number, lng: number) {
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1&zoom=18`
     );
     
     const data = await response.json();
 
     if (data && data.address) {
-      // Get the formatted address with 4 components (if available)
       const addressParts = [
         data.address.road,
         data.address.suburb,
         data.address.city,
-        data.address.state,
-        data.address.country
-      ].filter(Boolean); // Filter out undefined or empty values
+        data.address.state //,data.address.country
+      ].filter(Boolean);
 
-      const detailedAddress = addressParts.slice(0, 4).join(", ") || "Unknown location";
-      setAddress(detailedAddress);
+      const fullAddress = addressParts.join(", ") || "Unknown location";
+      setAddress(fullAddress);
     } else {
       setAddress("Failed to fetch address");
     }
@@ -165,14 +162,12 @@ async function reverseGeocode(lat: number, lng: number) {
   }
 }
 
-// When the location changes, trigger reverse geocoding
 useEffect(() => {
   if (location && location.lat && location.lng) {
     reverseGeocode(location.lat, location.lng);
   }
 }, [location]);
 
-// Example: Handling status selection (unchanged)
 const selectedStatusOption = statusOptions.find(
   (option) => option.value === selectedStatus
 );
@@ -185,11 +180,15 @@ const selectedStatusOption = statusOptions.find(
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <Clock className="w-6 h-6 text-white" />
-              </div>
+              <div className="w-20 h-full -m-5 p-0">
+              <img
+                src="/CYin-logo.png"
+                alt="CYin Logo"
+                className="scale-50"
+              />
+            </div>
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                WorkTracker
+                CYin
               </h1>
             </div>
 
@@ -200,10 +199,10 @@ const selectedStatusOption = statusOptions.find(
               </div>
               <button
                 onClick={logout}
-                className="flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="flex items-center space-x-2 bg-white text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white p-2 rounded-xl p-2 rounded-xl"
               >
-                <LogOut className="w-4 h-4" />
-                <span className="text-sm">Logout</span>
+                <LogOut className="w-4 h-4 text-red-500 " />
+                <span className="text-sm text-red-500">Logout</span>
               </button>
             </div>
           </div>
@@ -212,7 +211,7 @@ const selectedStatusOption = statusOptions.find(
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-6">
           <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
             Welcome back! 👋
           </h2>
@@ -245,7 +244,7 @@ const selectedStatusOption = statusOptions.find(
                 <MapPin className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Log Event
+                CYin Event
               </h3>
             </div>
 
@@ -276,6 +275,27 @@ const selectedStatusOption = statusOptions.find(
                 </div>
               )}
             </div>
+
+            {/* Current Status Display */}
+          {selectedStatusOption && (
+            <div className="mt-8 bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl p-6">
+              <div className="flex items-center justify-center space-x-4">
+                <div
+                  className={`w-12 h-12 bg-gradient-to-br ${selectedStatusOption.color} rounded-2xl flex items-center justify-center`}
+                >
+                  <selectedStatusOption.icon className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Selected Status
+                  </p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">
+                    {selectedStatusOption.label}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
             {/* Status Selection */}
             <div className="mb-6">
@@ -318,31 +338,12 @@ const selectedStatusOption = statusOptions.find(
               ) : (
                 <>
                   <MapPin className="w-5 h-5" />
-                  <span>Log Event</span>
+                  <span>Add New Event</span>
                 </>
               )}
             </button>
           </div>
-          {/* Current Status Display */}
-          {selectedStatusOption && (
-            <div className="mt-8 bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl p-6">
-              <div className="flex items-center justify-center space-x-4">
-                <div
-                  className={`w-12 h-12 bg-gradient-to-br ${selectedStatusOption.color} rounded-2xl flex items-center justify-center`}
-                >
-                  <selectedStatusOption.icon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Selected Status
-                  </p>
-                  <p className="text-xl font-bold text-slate-900 dark:text-white">
-                    {selectedStatusOption.label}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+          
 
           {/* Work Logging Card */}
           <div className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl shadow-purple-500/10 p-8">
@@ -351,7 +352,7 @@ const selectedStatusOption = statusOptions.find(
                 <FileText className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Log Work
+                CYin Work
               </h3>
             </div>
 
@@ -382,7 +383,7 @@ const selectedStatusOption = statusOptions.find(
               ) : (
                 <>
                   <FileText className="w-5 h-5" />
-                  <span>Log Work</span>
+                  <span>Send</span>
                 </>
               )}
             </button>
