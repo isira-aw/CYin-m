@@ -6,7 +6,7 @@ import {
   WorkRequest,
 } from "../types/auth";
 
-const API_BASE_URL = "http://localhost:8088";
+const API_BASE_URL = "https://cyin-production.up.railway.app";
 
 class ApiService {
   private getAuthHeaders() {
@@ -37,7 +37,7 @@ class ApiService {
     }
   }
 
-  async signUp(data: SignUpRequest): Promise<any> {
+  async signUp(data: SignUpRequest): Promise<unknown> {
     try {
       const response = await this.makeRequest(
         `${API_BASE_URL}/customers/signUp`,
