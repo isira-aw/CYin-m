@@ -72,11 +72,11 @@ export const SignUpPage: React.FC = () => {
             {/* <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <UserPlus className="w-8 h-8 text-white" />
             </div> */}
-            <div className=" bg-gradient-to-br  flex items-center justify-center mx-auto">
+            <div className="w-full h-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <img
-                src="/CYin-logo.png"
+                src="https://github.com/isira-aw/CYin-m/blob/main/CYin-logo.png?raw=true"
                 alt="CYin Logo"
-                className="w-40 h-40 rounded-xl object-cover"
+                className="scale-50"
               />
             </div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
