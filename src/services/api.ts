@@ -6,8 +6,8 @@ import {
   WorkRequest,
 } from "../types/auth";
 
-// const API_BASE_URL = "https://cyin-production.up.railway.app";
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "https://cyin-production.up.railway.app";
+// const API_BASE_URL = "http://localhost:8080";
 
 class ApiService {
   // Helper method to get authentication headers
