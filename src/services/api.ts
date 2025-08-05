@@ -10,6 +10,7 @@ const API_BASE_URL = "https://cyin-production.up.railway.app";
 // const API_BASE_URL = "http://localhost:8080";
 
 class ApiService {
+  // Helper method to get authentication headers
   private getAuthHeaders() {
     const token = localStorage.getItem("token");
     return {
@@ -19,6 +20,7 @@ class ApiService {
     };
   }
 
+  // Helper method to make API requests
   private async makeRequest(url: string, options: RequestInit) {
     try {
       const response = await fetch(url, {
@@ -38,6 +40,7 @@ class ApiService {
     }
   }
 
+  // Sign-up method
   async signUp(data: SignUpRequest): Promise<unknown> {
     try {
       const response = await this.makeRequest(
@@ -66,6 +69,7 @@ class ApiService {
     }
   }
 
+  // Login method
   async login(data: LoginRequest): Promise<LoginResponse> {
     try {
       const response = await this.makeRequest(
@@ -103,6 +107,7 @@ class ApiService {
     }
   }
 
+  // Log event method
   async logEvent(data: EventRequest): Promise<string> {
     try {
       const response = await this.makeRequest(`${API_BASE_URL}/api/event`, {
@@ -132,6 +137,7 @@ class ApiService {
     }
   }
 
+  // Log work method
   async logWork(data: WorkRequest): Promise<WorkRequest> {
     try {
       const response = await this.makeRequest(`${API_BASE_URL}/api/work`, {
@@ -157,6 +163,46 @@ class ApiService {
       return workResponse.data;
     } catch (error) {
       console.error("Log work error:", error);
+      throw error;
+    }
+  }
+
+  // Forgot password method
+  async forgotPassword(data: { email: string }): Promise<unknown> {
+    try {
+      const response = await this.makeRequest(`${API_BASE_URL}/api/auth/forgot-password`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Forgot password failed");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      throw error;
+    }
+  }
+
+  // Reset password method
+  async resetPassword(data: { token: string; newPassword: string }): Promise<unknown> {
+    try {
+      const response = await this.makeRequest(`${API_BASE_URL}/api/auth/reset-password`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Reset password failed");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Reset password error:", error);
       throw error;
     }
   }

@@ -54,8 +54,7 @@ export const LoginPage: React.FC = () => {
                 className="scale-50"
               />
             </div>
-             
-         
+
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               Welcome Back
             </h1>
@@ -122,6 +121,18 @@ export const LoginPage: React.FC = () => {
                   )}
                 </button>
               </div>
+              <div className="mt-8 text-center">
+                  <p className="text-slate-600 dark:text-slate-400">
+                    Forgot password?{" "}
+                    <Link
+                      to="/forgot-password"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
+                    >
+                      Reset it here
+                    </Link>
+                  </p>
+                </div>
+
             </div>
 
             <button
